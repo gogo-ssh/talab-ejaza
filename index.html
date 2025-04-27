@@ -8,21 +8,19 @@
       font-family: 'Cairo', sans-serif;
       background-color: #f9f9f9;
       padding: 20px;
-      direction: rtl;
       text-align: right;
     }
     .container {
       max-width: 600px;
       margin: auto;
-      background-color: #ffffff;
+      background: #fff;
       padding: 30px;
       border-radius: 15px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     h2 {
       text-align: center;
       color: #4CAF50;
-      margin-bottom: 25px;
     }
     label {
       display: block;
@@ -37,31 +35,22 @@
       border: 1px solid #ccc;
     }
     button {
-      width: 100%;
       margin-top: 20px;
       padding: 12px;
-      background-color: #4CAF50;
-      color: white;
+      background: #4CAF50;
+      color: #fff;
       border: none;
       border-radius: 10px;
-      font-size: 16px;
       cursor: pointer;
+      width: 100%;
     }
     button:hover {
-      background-color: #45a049;
-    }
-    #success-message {
-      display: none;
-      text-align: center;
-      color: green;
-      margin-top: 15px;
-      font-weight: bold;
+      background: #45a049;
     }
     .logo {
       display: block;
-      margin: 0 auto 25px;
-      max-width: 250px;
-      height: auto;
+      margin: 0 auto 20px;
+      max-width: 220px;
     }
   </style>
 </head>
@@ -71,12 +60,14 @@
   <img src="logo.png" alt="شعار الجمعية" class="logo">
   <h2>نموذج طلب إجازة</h2>
 
-  <form id="leaveForm">
-    <label for="employeeName">اسم الموظفة</label>
-    <input type="text" id="employeeName" name="employeeName" required>
+  <form action="https://api.web3forms.com/submit" method="POST">
+    <input type="hidden" name="access_key" value="81415b04-9ccc-4129-9683-63c5018c203f">
 
-    <label for="leaveType">نوع الإجازة</label>
-    <select id="leaveType" name="leaveType" required>
+    <label>اسم الموظفة</label>
+    <input type="text" name="اسم الموظفة" required>
+
+    <label>نوع الإجازة</label>
+    <select name="نوع الإجازة" required>
       <option value="">-- اختر نوع الإجازة --</option>
       <option value="اعتيادي">اعتيادي</option>
       <option value="مرضي">مرضي</option>
@@ -84,51 +75,18 @@
       <option value="أمومة">أمومة</option>
     </select>
 
-    <label for="startDate">تاريخ البداية</label>
-    <input type="date" id="startDate" name="startDate" required>
+    <label>تاريخ البداية</label>
+    <input type="date" name="تاريخ البداية" required>
 
-    <label for="endDate">تاريخ النهاية</label>
-    <input type="date" id="endDate" name="endDate" required>
+    <label>تاريخ النهاية</label>
+    <input type="date" name="تاريخ النهاية" required>
 
-    <label for="notes">ملاحظات</label>
-    <textarea id="notes" name="notes" rows="3"></textarea>
+    <label>ملاحظات</label>
+    <textarea name="ملاحظات"></textarea>
 
     <button type="submit">إرسال الطلب</button>
   </form>
-
-  <div id="success-message"></div>
 </div>
-
-<script>
-  document.getElementById('leaveForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-
-    const formData = {
-      employeeName: document.getElementById('employeeName').value,
-      leaveType: document.getElementById('leaveType').value,
-      startDate: document.getElementById('startDate').value,
-      endDate: document.getElementById('endDate').value,
-      notes: document.getElementById('notes').value
-    };
-
-    fetch("https://script.google.com/macros/s/AKfycbwP64S-iDLzj0glh4mfzIUAFDKzhC1LO5uXmW4DOcr3AMgOjTsQOC3F5lIYM0g3_mgW/exec", {
-      method: "POST",
-      body: JSON.stringify(formData),
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
-    .then(response => response.json())
-    .then(data => {
-      document.getElementById('success-message').textContent = "تم إرسال الطلب بنجاح ✅";
-      document.getElementById('success-message').style.display = 'block';
-      document.getElementById('leaveForm').reset();
-    })
-    .catch(error => {
-      alert('حدث خطأ أثناء الإرسال');
-    });
-  });
-</script>
 
 </body>
 </html>
