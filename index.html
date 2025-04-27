@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>نموذج طلب إجازة</title>
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: #f9f9f9;
+      padding: 20px;
+      direction: rtl;
+      text-align: right;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #4CAF50;
+      margin-bottom: 25px;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 12px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #success-message {
+      display: none;
+      text-align: center;
+      color: green;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    .logo {
+      display: block;
+      margin: 0 auto 25px;
+      max-width: 250px;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <img src="logo.png" alt="شعار الجمعية" class="logo">
+  <h2>نموذج طلب إجازة</h2>
+
+  <form id="leaveForm">
+    <label for="employeeName">اسم الموظفة</label>
+    <input type="text" id="employeeName" name="employeeName" required>
+
+    <label for="leaveType">نوع الإجازة</label>
+    <select id="leaveType" name="leaveType" required>
+      <option value="">-- اختر نوع الإجازة --</option>
+      <option value="اعتيادي">اعتيادي</option>
+      <option value="مرضي">مرضي</option>
+      <option value="وفاة">وفاة</option>
+      <option value="أمومة">أمومة</option>
+    </select>
+
+    <label for="startDate">تاريخ البداية</label>
+    <input type="date" id="startDate" name="startDate" required>
+
+    <label for="endDate">تاريخ النهاية</label>
+    <input type="date" id="endDate" name="endDate" required>
+
+    <label for="notes">ملاحظات</label>
+    <textarea id="notes" name="notes" rows="3"></textarea>
+
+    <button type="submit">إرسال الطلب</button>
+  </form>
+
+  <div id="success-message"></div>
+</div>
+
+<script>
+  document.getElementById('leaveForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const formData = {
+      employeeName: document.getElementById('employeeName').value,
+      leaveType: document.getElementById('leaveType').value,
+      startDate: document.getElementById('startDate').value,
+      endDate: document.getElementById('endDate').value,
+      notes: document.getElementById('notes').value
+    };
+
+    fetch("https://script.google.com/macros/s/AKfycbwP64S-iDLzj0glh4mfzIUAFDKzhC1LO5uXmW4DOcr3AMgOjTsQOC3F5lIYM0g3_mgW/exec", {
+      method: "POST",
+      body: JSON.stringify(formData),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      document.getElementById('success-message').textContent = "تم إرسال الطلب بنجاح ✅";
+      document.getElementById('success-message').style.display = 'block';
+      document.getElementById('leaveForm').reset();
+    })
+    .catch(error => {
+      alert('حدث خطأ أثناء الإرسال');
+    });
+  });
+</script>
+
+</body>
+</html>
