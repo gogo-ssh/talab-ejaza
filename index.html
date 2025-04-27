@@ -2,169 +2,147 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>نموذج طلب إجازة</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نموذج طلب إجازة - بنت شرار تحبك</title>
   <style>
     body {
-      font-family: 'Cairo', sans-serif;
-      background-color: #f9f9f9;
-      padding: 20px;
+      font-family: 'Tajawal', sans-serif;
+      background-color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
       margin: 0;
+      padding: 20px;
     }
-    .container {
-      width: 100%;
-      max-width: 600px;
-      margin: auto;
+    #logo {
+      width: 160px;
+      margin-bottom: 20px;
+      max-width: 80%;
+    }
+    form {
       background: #fff;
-      padding: 30px;
+      padding: 30px 25px;
       border-radius: 15px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 350px;
+      text-align: center;
+      transition: all 0.3s ease-in-out;
+      color: #333;
     }
     h2 {
-      text-align: center;
-      color: #4CAF50;
-    }
-    label {
-      display: block;
-      margin-top: 15px;
-      font-weight: bold;
+      color: #4CAF50; /* بس الخط أخضر بدون مستطيل */
+      margin-bottom: 20px;
+      font-size: 22px;
     }
     input, select, textarea {
       width: 100%;
       padding: 10px;
-      margin-top: 5px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
       border-radius: 8px;
-      border: 1px solid #ccc;
+      font-size: 14px;
       box-sizing: border-box;
-      font-size: 16px;
-    }
-    input[type="date"] {
-      appearance: none;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      width: 100%;
+      background-color: #ffffff;
+      color: #333;
     }
     button {
-      margin-top: 20px;
-      padding: 12px;
-      background: linear-gradient(to right, #4CAF50, #45a049);
-      color: #fff;
+      background-color: #4CAF50;
+      color: white;
       border: none;
-      border-radius: 10px;
-      cursor: pointer;
+      padding: 12px;
       width: 100%;
-      font-size: 18px;
-      transition: background 0.3s ease;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform 0.2s ease-in-out;
     }
     button:hover {
-      background: linear-gradient(to right, #45a049, #4CAF50);
+      background-color: #45a049;
+      transform: scale(1.05);
     }
-    .logo {
-      display: block;
-      margin: 0 auto 20px;
-      max-width: 100%;
-      height: auto;
-    }
-    #success-message {
-      text-align: center;
-      margin-top: 20px;
-      padding: 15px;
-      color: #155724;
-      background-color: #d4edda;
-      border: 1px solid #c3e6cb;
-      border-radius: 10px;
-      font-size: 18px;
+    #successMessage {
       display: none;
-      opacity: 0;
-      transition: opacity 0.5s ease-in-out;
+      background-color: #d4edda;
+      color: #155724;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 15px;
+      width: 100%;
+      max-width: 350px;
+      text-align: center;
+      font-weight: bold;
     }
-    @media (max-width: 600px) {
-      .container {
-        padding: 20px;
-      }
-      h2 {
-        font-size: 22px;
-      }
-      input, select, textarea, button {
-        font-size: 16px;
-      }
+    #footer-message {
+      margin-top: 20px;
+      font-size: 16px;
+      color: #4CAF50;
+      font-weight: bold;
+      text-align: center;
     }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <img src="logo.png" alt="شعار الجمعية" class="logo">
+<img id="logo" src="logo.png" alt="شعار الجمعية">
+
+<div id="successMessage">💚 بنت شرار تحبك وتم استلام طلبك الجميل بنجاح!</div>
+
+<form id="leaveForm">
   <h2>نموذج طلب إجازة</h2>
+  
+  <input type="text" id="employeeName" placeholder="اسم الموظف" required>
+  
+  <select id="leaveType" required>
+    <option value="">اختر نوع الإجازة</option>
+    <option value="اعتيادي">اعتيادي</option>
+    <option value="مرضي">مرضي</option>
+    <option value="اختبارية">اختبارية</option>
+    <option value="وفاة">وفاة</option>
+    <option value="أمومة">أمومة</option>
+  </select>
+  
+  <input type="date" id="startDate" required>
+  
+  <input type="date" id="endDate" required>
+  
+  <textarea id="notes" placeholder="ملاحظات إضافية"></textarea>
+  
+  <button type="submit">إرسال الطلب</button>
+</form>
 
-  <form id="leaveForm" action="https://api.web3forms.com/submit" method="POST">
-    <input type="hidden" name="access_key" value="81415b04-9ccc-4129-9683-63c5018c203f">
-
-    <label>اسم الموظفة</label>
-    <input type="text" name="اسم الموظفة" required>
-
-    <label>نوع الإجازة</label>
-    <select name="نوع الإجازة" required>
-      <option value="">-- اختر نوع الإجازة --</option>
-      <option value="اعتيادي">اعتيادي</option>
-      <option value="مرضي">مرضي</option>
-      <option value="وفاة">وفاة</option>
-      <option value="أمومة">أمومة</option>
-      <option value="اختبار">اختبار</option>
-    </select>
-
-    <label>تاريخ البداية</label>
-    <input type="date" name="تاريخ البداية" required>
-
-    <label>تاريخ النهاية</label>
-    <input type="date" name="تاريخ النهاية" required>
-
-    <label>ملاحظات</label>
-    <textarea name="ملاحظات"></textarea>
-
-    <button type="submit">إرسال الطلب</button>
-  </form>
-
-  <div id="success-message">
-    ✅ تم إرسال الطلب بنجاح لبنت شرار اللي تحبك ✨🫶🏼
-  </div>
-</div>
+<div id="footer-message">بنت شرار تحبك 💚</div>
 
 <script>
-  const form = document.getElementById('leaveForm');
-  const successMessage = document.getElementById('success-message');
-
-  form.addEventListener('submit', function(e) {
+  document.getElementById('leaveForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-
-    if (confirm('هل أنت متأكد أنك تريد إرسال الطلب؟')) {
-      fetch(form.action, {
-        method: form.method,
-        body: new FormData(form),
-      })
-      .then(response => {
-        if (response.ok) {
-          successMessage.style.display = 'block';
-          setTimeout(() => {
-            successMessage.style.opacity = 1;
-          }, 100); 
-          form.reset();
-        } else {
-          alert('حدث خطأ أثناء الإرسال');
-        }
-      })
-      .catch(error => {
-        alert('حدث خطأ أثناء الإرسال');
-      });
-    }
-  });
-
-  const inputs = document.querySelectorAll('input, select, textarea');
-  inputs.forEach(input => {
-    input.addEventListener('input', () => {
-      successMessage.style.display = 'none';
-      successMessage.style.opacity = 0;
+    
+    const data = {
+      employee_name: document.getElementById('employeeName').value,
+      leave_type: document.getElementById('leaveType').value,
+      start_date: document.getElementById('startDate').value,
+      end_date: document.getElementById('endDate').value,
+      notes: document.getElementById('notes').value,
+      created_at: new Date().toISOString()
+    };
+    
+    await fetch('رابط-نشر-السكريبت-من-فايربيز', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
     });
+
+    document.getElementById('leaveForm').reset();
+    document.getElementById('successMessage').innerHTML = "💚 بنت شرار تحبك وتم استلام طلبك الجميل بنجاح!";
+    document.getElementById('successMessage').style.display = 'block';
+
+    setTimeout(() => {
+      document.getElementById('successMessage').style.display = 'none';
+    }, 4000);
   });
 </script>
 
