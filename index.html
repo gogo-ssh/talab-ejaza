@@ -33,6 +33,7 @@
       margin-top: 5px;
       border-radius: 8px;
       border: 1px solid #ccc;
+      box-sizing: border-box;
     }
     button {
       margin-top: 20px;
@@ -71,10 +72,10 @@
     <input type="hidden" name="access_key" value="81415b04-9ccc-4129-9683-63c5018c203f">
 
     <label>اسم الموظفة</label>
-    <input type="text" name="اسم الموظفة" id="employeeName" required>
+    <input type="text" name="اسم الموظفة" required>
 
     <label>نوع الإجازة</label>
-    <select name="نوع الإجازة" id="leaveType" required>
+    <select name="نوع الإجازة" required>
       <option value="">-- اختر نوع الإجازة --</option>
       <option value="اعتيادي">اعتيادي</option>
       <option value="مرضي">مرضي</option>
@@ -99,21 +100,20 @@
 </div>
 
 <script>
-  document.getElementById('leaveForm').addEventListener('submit', function(e) {
-    const leaveType = document.getElementById('leaveType').value;
+  const form = document.getElementById('leaveForm');
+  const successMessage = document.getElementById('success-message');
+
+  form.addEventListener('submit', function(e) {
     e.preventDefault();
 
-    const form = e.target;
     fetch(form.action, {
       method: form.method,
       body: new FormData(form),
     })
     .then(response => {
       if (response.ok) {
-        let message = "تم إرسال الطلب بنجاح لبنت شرار اللي تحبك ✨🫶🏼";
-
-        document.getElementById('success-message').textContent = message;
-        document.getElementById('success-message').style.display = 'block';
+        successMessage.textContent = "تم إرسال الطلب بنجاح لبنت شرار اللي تحبك ✨🫶🏼";
+        successMessage.style.display = 'block';
         form.reset();
       } else {
         alert('حدث خطأ أثناء الإرسال');
@@ -121,6 +121,14 @@
     })
     .catch(error => {
       alert('حدث خطأ أثناء الإرسال');
+    });
+  });
+
+  // نخفي الرسالة لما المستخدم يبدأ يكتب من جديد
+  const inputs = document.querySelectorAll('input, select, textarea');
+  inputs.forEach(input => {
+    input.addEventListener('input', () => {
+      successMessage.style.display = 'none';
     });
   });
 </script>
