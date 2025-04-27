@@ -52,6 +52,13 @@
       margin: 0 auto 20px;
       max-width: 220px;
     }
+    #success-message {
+      text-align: center;
+      margin-top: 20px;
+      color: green;
+      font-size: 18px;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -60,19 +67,20 @@
   <img src="logo.png" alt="شعار الجمعية" class="logo">
   <h2>نموذج طلب إجازة</h2>
 
-  <form action="https://api.web3forms.com/submit" method="POST">
+  <form id="leaveForm" action="https://api.web3forms.com/submit" method="POST">
     <input type="hidden" name="access_key" value="81415b04-9ccc-4129-9683-63c5018c203f">
 
     <label>اسم الموظفة</label>
-    <input type="text" name="اسم الموظفة" required>
+    <input type="text" name="اسم الموظفة" id="employeeName" required>
 
     <label>نوع الإجازة</label>
-    <select name="نوع الإجازة" required>
+    <select name="نوع الإجازة" id="leaveType" required>
       <option value="">-- اختر نوع الإجازة --</option>
       <option value="اعتيادي">اعتيادي</option>
       <option value="مرضي">مرضي</option>
       <option value="وفاة">وفاة</option>
       <option value="أمومة">أمومة</option>
+      <option value="اختبار">اختبار</option>
     </select>
 
     <label>تاريخ البداية</label>
@@ -86,7 +94,36 @@
 
     <button type="submit">إرسال الطلب</button>
   </form>
+
+  <div id="success-message"></div>
 </div>
+
+<script>
+  document.getElementById('leaveForm').addEventListener('submit', function(e) {
+    const leaveType = document.getElementById('leaveType').value;
+    e.preventDefault();
+
+    const form = e.target;
+    fetch(form.action, {
+      method: form.method,
+      body: new FormData(form),
+    })
+    .then(response => {
+      if (response.ok) {
+        let message = "تم إرسال الطلب بنجاح لبنت شرار اللي تحبك ✨🫶🏼";
+
+        document.getElementById('success-message').textContent = message;
+        document.getElementById('success-message').style.display = 'block';
+        form.reset();
+      } else {
+        alert('حدث خطأ أثناء الإرسال');
+      }
+    })
+    .catch(error => {
+      alert('حدث خطأ أثناء الإرسال');
+    });
+  });
+</script>
 
 </body>
 </html>
