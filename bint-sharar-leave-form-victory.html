@@ -1,0 +1,188 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نموذج طلب إجازة - بنت شرار</title>
+  <style>
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background-color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    #logo {
+      width: 160px;
+      margin-bottom: 20px;
+      max-width: 80%;
+    }
+    form {
+      background: #fff;
+      padding: 30px 25px;
+      border-radius: 15px;
+      box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 350px;
+      text-align: center;
+      transition: all 0.3s ease-in-out;
+      color: #333;
+    }
+    h2 {
+      color: #4CAF50;
+      margin-bottom: 20px;
+      font-size: 22px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      box-sizing: border-box;
+      background-color: #ffffff;
+      color: #333;
+    }
+    #fileUploadField {
+      display: none;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 12px;
+      width: 100%;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform 0.2s ease-in-out;
+    }
+    button:hover {
+      background-color: #45a049;
+      transform: scale(1.05);
+    }
+    #successMessage {
+      display: none;
+      background-color: #d4edda;
+      color: #155724;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 15px;
+      width: 100%;
+      max-width: 350px;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAwvZzDbm8QN8PS0hegB1YPwwEtJo1SDA",
+      authDomain: "gog-leave-form.firebaseapp.com",
+      projectId: "gog-leave-form",
+      storageBucket: "gog-leave-form.appspot.com",
+      messagingSenderId: "250452364506",
+      appId: "1:250452364506:web:c3fa63a546ebc5dbf829e3"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('leaveForm');
+      const leaveType = document.getElementById('leaveType');
+      const fileField = document.getElementById('fileUploadField');
+      const fileInput = document.getElementById('file');
+      const fileLabel = document.getElementById('fileLabel');
+      const successMsg = document.getElementById('successMessage');
+
+      leaveType.addEventListener('change', () => {
+        const value = leaveType.value;
+        if (['مرضي', 'وفاة', 'أمومة', 'اختبارية'].includes(value)) {
+          fileField.style.display = 'block';
+          fileLabel.textContent = {
+            'مرضي': 'إرفاق تقرير طبي:',
+            'وفاة': 'إرفاق شهادة وفاة:',
+            'أمومة': 'إرفاق تقرير إجازة أمومة:',
+            'اختبارية': 'إرفاق جدول الاختبارات:'
+          }[value];
+        } else {
+          fileField.style.display = 'none';
+        }
+      });
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        let fileURL = '';
+        const file = fileInput.files[0];
+        if (file) {
+          const storageRef = ref(storage, 'leave_files/' + Date.now() + '_' + file.name);
+          const snapshot = await uploadBytes(storageRef, file);
+          fileURL = await getDownloadURL(snapshot.ref);
+        }
+
+        await addDoc(collection(db, 'leave_requests'), {
+          employee_name: document.getElementById('employeeName').value,
+          leave_type: leaveType.value,
+          start_date: document.getElementById('startDate').value,
+          end_date: document.getElementById('endDate').value,
+          notes: document.getElementById('notes').value,
+          file_url: fileURL,
+          created_at: serverTimestamp()
+        });
+
+        form.reset();
+        fileField.style.display = 'none';
+        successMsg.innerText = "♥️ تم استلام طلبك الجميل من بنت شرار";
+        successMsg.style.display = 'block';
+        setTimeout(() => successMsg.style.display = 'none', 4000);
+      });
+    });
+  </script>
+</head>
+<body>
+
+<img id="logo" src="logo.png" alt="شعار الجمعية">
+
+<div id="successMessage"></div>
+
+<form id="leaveForm">
+  <h2>نموذج طلب إجازة</h2>
+
+  <input type="text" id="employeeName" placeholder="اسم الموظف" required>
+
+  <select id="leaveType" required>
+    <option value="">اختر نوع الإجازة</option>
+    <option value="اعتيادي">اعتيادي</option>
+    <option value="مرضي">مرضي</option>
+    <option value="اختبارية">اختبارية</option>
+    <option value="وفاة">وفاة</option>
+    <option value="أمومة">أمومة</option>
+  </select>
+
+  <input type="date" id="startDate" required>
+  <input type="date" id="endDate" required>
+
+  <textarea id="notes" placeholder="ملاحظات إضافية"></textarea>
+
+  <div id="fileUploadField">
+    <label id="fileLabel" for="file">إرفاق ملف داعم:</label>
+    <input type="file" id="file" accept=".pdf,.jpg,.jpeg,.png">
+  </div>
+
+  <button type="submit">إرسال الطلب</button>
+</form>
+
+</body>
+</html>
