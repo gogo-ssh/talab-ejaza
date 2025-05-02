@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>نموذج طلب إجازة - بنت شرار تحبك</title>
+  <title>نموذج طلب إجازة - بنت شرار</title>
   <style>
     body {
       font-family: 'Tajawal', sans-serif;
@@ -33,7 +34,7 @@
       color: #333;
     }
     h2 {
-      color: #4CAF50; /* بس الخط أخضر بدون مستطيل */
+      color: #4CAF50;
       margin-bottom: 20px;
       font-size: 22px;
     }
@@ -47,6 +48,9 @@
       box-sizing: border-box;
       background-color: #ffffff;
       color: #333;
+    }
+    #fileUploadField {
+      display: none;
     }
     button {
       background-color: #4CAF50;
@@ -75,26 +79,81 @@
       text-align: center;
       font-weight: bold;
     }
-    #footer-message {
-      margin-top: 20px;
-      font-size: 16px;
-      color: #4CAF50;
-      font-weight: bold;
-      text-align: center;
-    }
   </style>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAwvZzDbm8QN8PS0hegB1YPwwEtJo1SDA",
+      authDomain: "gog-leave-form.firebaseapp.com",
+      projectId: "gog-leave-form",
+      storageBucket: "gog-leave-form.appspot.com",
+      messagingSenderId: "250452364506",
+      appId: "1:250452364506:web:c3fa63a546ebc5dbf829e3"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('leaveForm');
+      const leaveType = document.getElementById('leaveType');
+      const fileField = document.getElementById('fileUploadField');
+      const fileInput = document.getElementById('file');
+      const successMsg = document.getElementById('successMessage');
+
+      leaveType.addEventListener('change', () => {
+        const typesRequiringFile = ['مرضي', 'وفاة', 'أمومة', 'اختبارية'];
+        if (typesRequiringFile.includes(leaveType.value)) {
+          fileField.style.display = 'block';
+        } else {
+          fileField.style.display = 'none';
+        }
+      });
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        let fileURL = '';
+        const file = fileInput.files[0];
+        if (file) {
+          const storageRef = ref(storage, 'leave_files/' + Date.now() + '_' + file.name);
+          const snapshot = await uploadBytes(storageRef, file);
+          fileURL = await getDownloadURL(snapshot.ref);
+        }
+
+        await addDoc(collection(db, 'leave_requests'), {
+          employee_name: document.getElementById('employeeName').value,
+          leave_type: leaveType.value,
+          start_date: document.getElementById('startDate').value,
+          end_date: document.getElementById('endDate').value,
+          notes: document.getElementById('notes').value,
+          file_url: fileURL,
+          created_at: serverTimestamp()
+        });
+
+        form.reset();
+        fileField.style.display = 'none';
+        successMsg.innerText = "💚 تم استلام طلبك الجميل بنجاح!";
+        successMsg.style.display = 'block';
+        setTimeout(() => successMsg.style.display = 'none', 4000);
+      });
+    });
+  </script>
 </head>
 <body>
 
 <img id="logo" src="logo.png" alt="شعار الجمعية">
 
-<div id="successMessage">💚 بنت شرار تحبك وتم استلام طلبك الجميل بنجاح!</div>
+<div id="successMessage"></div>
 
 <form id="leaveForm">
   <h2>نموذج طلب إجازة</h2>
-  
+
   <input type="text" id="employeeName" placeholder="اسم الموظف" required>
-  
   <select id="leaveType" required>
     <option value="">اختر نوع الإجازة</option>
     <option value="اعتيادي">اعتيادي</option>
@@ -103,48 +162,15 @@
     <option value="وفاة">وفاة</option>
     <option value="أمومة">أمومة</option>
   </select>
-  
   <input type="date" id="startDate" required>
-  
   <input type="date" id="endDate" required>
-  
   <textarea id="notes" placeholder="ملاحظات إضافية"></textarea>
-  
+  <div id="fileUploadField">
+    <label for="file">إرفاق ملف داعم:</label>
+    <input type="file" id="file" accept=".pdf,.jpg,.jpeg,.png">
+  </div>
   <button type="submit">إرسال الطلب</button>
 </form>
-
-<div id="footer-message">بنت شرار تحبك 💚</div>
-
-<script>
-  document.getElementById('leaveForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const data = {
-      employee_name: document.getElementById('employeeName').value,
-      leave_type: document.getElementById('leaveType').value,
-      start_date: document.getElementById('startDate').value,
-      end_date: document.getElementById('endDate').value,
-      notes: document.getElementById('notes').value,
-      created_at: new Date().toISOString()
-    };
-    
-    await fetch('رابط-نشر-السكريبت-من-فايربيز', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    });
-
-    document.getElementById('leaveForm').reset();
-    document.getElementById('successMessage').innerHTML = "💚 بنت شرار تحبك وتم استلام طلبك الجميل بنجاح!";
-    document.getElementById('successMessage').style.display = 'block';
-
-    setTimeout(() => {
-      document.getElementById('successMessage').style.display = 'none';
-    }, 4000);
-  });
-</script>
 
 </body>
 </html>
